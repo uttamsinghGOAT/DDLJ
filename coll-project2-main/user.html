@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="user.css">
+</head>
+<body>
+
+<!-- menu -->
+<div class="menu">
+<h2 class="menu-title">Menu</h2>
+
+    <ul class="menu-list">
+        <!-- Chat Menu Item -->
+        <li id="chatMenu" class="chat-menu">
+            <i class="fa-solid fa-comments"></i>
+            <B class="chatyo">Chat</B> 💬
+            <span id="chatBadge" class="chat-badge">0</span>
+        </li>
+    </ul>
+
+</div>
+
+<!-- CHAT PANEL -->
+<div id="chatContainer" class="chat-container">
+
+    <div class="chat-header">
+        <span>Live Support</span>
+        <span id="closeChat">✖</span>
+    </div>
+
+    <div id="chatBox" class="chat-box"></div>
+
+    <div class="chat-input">
+        <select id="roleSelect">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <input type="text" id="messageInput" placeholder="Type message...">
+        <button id="sendBtn">Send</button>
+    </div>
+
+</div>   
+
+<!-- MAIN -->
+<div class="main">
+
+    <!-- NAVBAR -->
+    <div class="top-navbar">
+        <div class="logo">
+            <img src="logo.jpeg" alt="Logo">
+        </div>
+        <nav class="top-links">
+            <a href="#">Home</a>
+            <a href="#">Vote</a>
+            <a href="#">Results</a>
+            <a href="#">News</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </nav>
+        <div class="profile-section">
+            <div class="profile-text">
+                <span class="welcome-label">Welcome back,</span>
+                <strong id="username">User</strong>
+            </div>
+            <div class="user-img" id="userIcon">U</div>
+
+            <div class="profile-dropdown" id="profileDropdown">
+                <p><strong>Name:</strong> <span id="pName"></span></p>
+                <p><strong>Phone:</strong> <span id="pPhone"></span></p>
+                <p><strong>Aadhaar:</strong> <span id="pAadhaar"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <section class="dashboard-hero">
+        <div class="hero-copy">
+            <p class="eyebrow">Voter dashboard</p>
+            <h1>Hi, <span class="hero-username">User</span> 👋</h1>
+            <p>Secure online voting made fast and easy. Verify your details, cast your vote, and track results from one dashboard.</p>
+        </div>
+        <div class="hero-actions">
+            <button id="startVoting" class="primary-btn">Start Voting</button>
+            <button class="secondary-btn">View Results</button>
+        </div>
+    </section>
+
+    <div class="stats-grid">
+        <article class="status-card fade-in">
+            <span class="card-label">Voting status</span>
+            <strong id="voterStatus">Registered</strong>
+            <p>Ready to verify and cast your vote.</p>
+        </article>
+        <article class="status-card fade-in delay-1">
+            <span class="card-label">Next election</span>
+            <strong>May 15, 2026</strong>
+            <p>Keep your voter ID ready for the next round.</p>
+        </article>
+        <article class="status-card fade-in delay-2">
+            <span class="card-label">Candidates</span>
+            <strong>5</strong>
+            <p>Review candidates before voting.</p>
+        </article>
+    </div>
+
+    <div class="dashboard-grid">
+        <section class="panel panel-left">
+            <div class="panel-card vote-panel fade-in">
+                <div class="panel-card-header">
+                    <h2>Voter verification</h2>
+                    <span class="badge">Secure</span>
+                </div>
+                <div class="voting-form" id="votingForm">
+                    <h3>Verify your identity</h3>
+                    <input type="text" id="voterId" placeholder="Enter Voter ID (10 Characters)">
+                    <input type="date" id="dob">
+                    <button type="button" id="submitVote">Submit</button>
+                    <p id="message"></p>
+                </div>
+            </div>
+
+            <div class="panel-card quick-actions fade-in delay-1">
+                <h2>Quick actions</h2>
+                <div class="action-grid">
+                    <a href="#" class="action-card">Candidate list</a>
+                    <a href="#" class="action-card">My vote history</a>
+                    <a href="#" class="action-card">Election rules</a>
+                    <a href="#" class="action-card">Support</a>
+                </div>
+            </div>
+        </section>
+
+        <aside class="panel panel-right">
+            <div class="panel-card notice-card fade-in delay-2">
+                <h2>Important notice</h2>
+                <p>Only one vote per user is allowed. Keep your credentials safe and complete verification before proceeding.</p>
+            </div>
+
+            <div class="panel-card vote-summary-card fade-in delay-3">
+                <a href="#" id="myVoteBtn" class="my-vote-link">🗳️ My Vote</a>
+                <div class="vote-info">
+                    <h2>Your vote details</h2>
+                    <p id="myVoteResult">You have not voted yet.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script src="user.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadhaar Login</title>
+    <link rel="stylesheet" href="login.css">
+    <style>
+        /* Optional quick styles for the register link */
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #1a73e8;
+            cursor: pointer;
+        }
+        .register-link a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Secure Aadhaar Login</h2>
+            <form id="loginForm">
+                <label for="aadhaar">Aadhaar Number</label>
+                <input type="text" id="aadhaar" placeholder="Enter 12-digit Aadhaar" maxlength="12" required>
+
+                <label for="otp">OTP</label>
+                <input type="text" id="otp" placeholder="Enter OTP" maxlength="6" required>
+
+                <div class="button-group">
+                    <button type="button" id="sendOtpBtn">Send OTP</button>
+                    <button type="submit" id="loginBtn">Login</button>
+                </div>
+            </form>
+
+            <!-- Register Link -->
+            <div class="register-link">
+                Don't have an account? <a href="reg.html">Register here</a>
+            </div>
+        </div>
+    </div>
+
+<script>
+const aadhaarInput = document.getElementById('aadhaar');
+const otpInput = document.getElementById('otp');
+const sendOtpBtn = document.getElementById('sendOtpBtn');
+const loginForm = document.getElementById('loginForm');
+let generatedOtp = '';
+
+// Allow only numbers
+aadhaarInput.addEventListener('input', () => { aadhaarInput.value = aadhaarInput.value.replace(/\D/g,''); });
+otpInput.addEventListener('input', () => { otpInput.value = otpInput.value.replace(/\D/g,''); });
+
+// Send OTP simulation
+sendOtpBtn.addEventListener('click', () => {
+    if(aadhaarInput.value.length !== 12){
+        alert("Please enter a valid 12-digit Aadhaar number!");
+        return;
+    }
+    generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    alert("OTP sent to your registered mobile number (simulation): " + generatedOtp);
+});
+
+// Login form submit
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if(aadhaarInput.value.length !== 12){
+        alert("Enter a valid 12-digit Aadhaar number!");
+        return;
+    }
+    if(otpInput.value !== generatedOtp){
+        alert("Invalid OTP! Please try again.");
+        return;
+    }
+
+    // Check localStorage users
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let currentUser = users.find(u=>u.aadhaar===aadhaarInput.value);
+
+    if(currentUser){
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        alert("Login Successful! ✅");
+        window.location.href="user.html";
+    } else {
+        alert("No user found with this Aadhaar. Please register first.");
+    }
+});
+</script>
+</body>
+</html>

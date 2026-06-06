@@ -1,0 +1,106 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  min-height:100vh;
+background:
+linear-gradient(rgba(13,35,83,85),rgba(133, 171, 217, 0.797)),
+url("bg.jpeg") center/cover no-repeat;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.vote-container {
+    background: #ffffff;
+    width: 600px;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.vote-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.vote-header h1 {
+    color: #0d2b66;
+    margin-bottom: 10px;
+}
+
+.candidate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.candidate-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-radius: 10px;
+    border: 2px solid #eee;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.candidate-card:hover {
+    border-color: #e53935;
+    background: #f9f9f9;
+}
+
+.candidate-card img {
+    border-radius: 8px;
+}
+
+.candidate-card.selected {
+    border-color: #e53935;
+    background: #fff5f5;
+}
+
+.confirm-btn {
+    margin-top: 30px;
+    width: 100%;
+    padding: 15px;
+    background: #e53935;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.confirm-btn:hover {
+    background: #c62828;
+}
+
+#voteMessage {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+.agp {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.bjp {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.hat {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}

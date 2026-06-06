@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cast Your Vote</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="vote.css">
+</head>
+<body>
+
+<div class="vote-container">
+
+    <div class="vote-header">
+        <h1>🗳️ Cast Your Vote</h1>
+        <p>Select one candidate and confirm your vote</p>
+    </div>
+
+    <div class="candidate-list">
+
+        <div class="candidate-card" data-party="Party A">
+            <img src="bjp.jpeg" alt="Symbol" class="bjp">
+            <div>
+                <h3>R***-***a</h3>
+                <p>Party A</p>
+            </div>
+            <input type="radio" name="vote" value="Party A">
+        </div>
+
+        <div class="candidate-card" data-party="Party B">
+            <img src="hatrosin.jpeg" alt="Symbol" class="hat">
+            <div>
+                <h3>A***-***a</h3>
+                <p>Party B</p>
+            </div>
+            <input type="radio" name="vote" value="Party B">
+        </div>
+
+        <div class="candidate-card" data-party="Party C">
+            <img src="agp.jpeg" alt="Symbol" class="agp">
+            <div>
+                <h3>V***-***h</h3>
+                <p>Party C</p>
+            </div>
+            <input type="radio" name="vote" value="Party C">
+        </div>
+
+    </div>
+
+    <button id="confirmVote" class="confirm-btn">✅ Confirm Vote</button>
+
+    <p id="voteMessage"></p>
+
+</div>
+
+<script src="vote.js"></script>
+</body>
+</html>

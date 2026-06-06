@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Click2web</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="index.css">
+<link rel="icon" type="image/jpeg" href="logo.jpeg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+<header>
+<div class="logo">
+<img src="logo.jpeg" alt="Click2Web Logo">
+</div>
+
+<nav>
+<a href="reg.html"><i class="fas fa-user-plus"></i> Registration</a>
+<a href="login.html"><i class="fas fa-vote-yea"></i> Voting/Login</a>
+<a href="result.html"><i class="fas fa-chart-bar"></i> Election Results</a>
+<a href="help.html"><i class="fas fa-question-circle"></i> Help</a>
+<a href="#about"><i class="fas fa-info-circle"></i> About Us</a>
+</nav>
+
+<button id="dark-mode-toggle" class="dark-mode-btn">
+<i class="fas fa-moon"></i>
+</button>
+</header>
+<section class="hero">
+
+<div class="slideshow">
+<img src="slide1.jpeg" class="slide active">
+<img src="slide2.jpeg" class="slide">
+<img src="slide3.jpeg" class="slide">
+<img src="slide4.jpeg" class="slide">
+</div>
+
+<h1>This is an official website for E-voting</h1>
+<p>
+The website has been updated to provide voters an even easier way to find important election and voting information.
+</p>
+</section>
+
+<div class="container">
+
+<div class="grid">
+
+<a href="result.html" class="vote-results">
+<div class="card">
+<div class="icon">📊</div>
+<h3>Election Results</h3>
+</div>
+</a>
+<a href="inst.html" class="inst-call">
+<div class="card">
+<div class="icon">🗳️ </div>
+<h3>Voting Instructions</h3>
+</div>
+</a>
+<a href="https://sec.assam.gov.in/recruitment" class="worker-call">
+<div class="card">
+<div class="icon">🏅</div>
+<h3>Become an Election Worker</h3>
+</div>
+</a>
+<a href="https://timesofindia.indiatimes.com/elections/assembly-elections/assam/assam-polls-bjp-to-release-candidate-list-after-february-25/articleshow/128264919.cms" class="camp-call">
+<div class="card">
+<div class="icon">📣</div>
+<h3>Campaign</h3>
+</div>
+</a>
+<a href="https://en.wikipedia.org/wiki/2026_Assam_Legislative_Assembly_election" class="vote-news">
+<div class="card">
+<div class="icon">📰</div>
+<h3>News & Press Releases</h3>
+</div>
+</a>
+
+</div>
+
+</div>
+
+<section class="about animate-on-scroll" id="about">
+<h2>About Us</h2>
+
+<p>
+<b>Click2Web is a modern digital platform developed to support secure, transparent, and accessible electronic voting services.
+</b></p>
+
+<p><b>
+We are committed to maintaining high standards of data protection, system integrity, and user experience.
+</b></p>
+
+<p><b>
+Our vision is to build a trusted digital ecosystem.
+</b></p>
+</section>
+
+<footer class="animate-on-scroll">
+<p>© 2026 Click2Web. All Rights Reserved.</p>
+</footer>
+
+<script>
+let slides = document.querySelectorAll(".slide");
+let index = 0;
+
+setInterval(()=>{
+slides[index].classList.remove("active");
+index = (index + 1) % slides.length;
+slides[index].classList.add("active");
+},3000);
+
+// Dark mode toggle
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const body = document.body;
+
+darkModeToggle.addEventListener('click', () => {
+  body.classList.toggle('dark-mode');
+  const icon = darkModeToggle.querySelector('i');
+  if (body.classList.contains('dark-mode')) {
+    icon.className = 'fas fa-sun';
+  } else {
+    icon.className = 'fas fa-moon';
+  }
+});
+
+// Scroll animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('animate');
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>
