@@ -81,15 +81,23 @@ function sendOTP(){
 function verifyOTP(){
     let otp=document.getElementById("otp").value;
 
-    if(otp==generatedOTP){
-        document.getElementById("msg").innerHTML="OTP Verified Successfully ✅";
+    if(generatedOTP===""){
+        document.getElementById("msg").innerHTML="Please send OTP first";
+        return;
+    }
+
+    if(parseInt(otp)===generatedOTP){
+        document.getElementById("msg").innerHTML="✓ OTP Verified Successfully";
     }else{
-        document.getElementById("msg").innerHTML="Invalid OTP ❌";
+        document.getElementById("msg").innerHTML="Invalid OTP";
     }
 }
 
 // Register
 function register(){
+    console.log("Register clicked");
+    console.log("Message content:", document.getElementById("msg").innerHTML);
+
     if(!document.getElementById("msg").innerHTML.includes("Verified")){
         alert("Please verify OTP first");
         return;
@@ -100,6 +108,8 @@ function register(){
     let aadhaar=document.getElementById("aadhaar").value;
     let address=document.getElementById("address").value;
     let photoInput = document.getElementById("photo");
+
+    console.log("Fields:", {fullname, phone, aadhaar, address, photoSelected: !!photoInput.files[0]});
 
     if(fullname=="" || phone=="" || aadhaar=="" || address==""){
         alert("Please fill all details");
@@ -113,8 +123,6 @@ function register(){
 
     let reader = new FileReader();
     reader.onload = function() {
-        let photo = reader.result;
-
         // Get existing users from localStorage
         let users = JSON.parse(localStorage.getItem("users")) || [];
 
@@ -124,13 +132,13 @@ function register(){
             return;
         }
 
-        // Store user info in localStorage
-        users.push({fullname, phone, aadhaar, address, photo});
+        // Store user info in localStorage (without the large photo data)
+        users.push({fullname, phone, aadhaar, address, photoUploaded: true});
         localStorage.setItem("users", JSON.stringify(users));
 
         // Redirect to login page
         alert("Registration Successful! Please login.");
-        window.location.href="login.html";
+        window.location.href="Login.html";
     };
     reader.readAsDataURL(photoInput.files[0]);
 }
