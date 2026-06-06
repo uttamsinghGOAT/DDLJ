@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voter Registration | Click2Web</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="reg.css">
+</head>
+
+<body>
+<div class="wrapper">
+<div class="register-box">
+<h2>Voter Registration</h2>
+<p class="subtitle">Secure Digital Registration</p>
+<form onsubmit="return false">
+
+<div class="input-box">
+<label>Full Name</label>
+<input type="text" id="fullname" placeholder="Enter full name" required>
+</div>
+
+<div class="input-box">
+<label>Phone Number</label>
+<input type="text" id="phone" maxlength="10" placeholder="10 digit phone"
+oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+</div>
+
+<div class="input-box">
+<label>Aadhaar Number</label>
+<input type="text" id="aadhaar" maxlength="12" placeholder="12 digit Aadhaar"
+oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+</div>
+
+<div class="input-box">
+<label>Current Address</label>
+<input type="text" id="address" placeholder="Enter your current address" required>
+</div>
+
+<div class="input-box">
+<label>Date of Birth</label>
+<input type="date" id="dob" required>
+</div>
+
+<div class="input-box">
+<label>Profile Photo</label>
+<input type="file" id="photo" accept="image/*">
+</div>
+
+<button class="otp-btn" type="button" onclick="sendOTP()">Send OTP</button>
+
+<div class="otp-row">
+<div class="input-box otp-input">
+<label>Aadhaar OTP</label>
+<input type="text" id="otp" maxlength="6" placeholder="6 digit OTP"
+oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+</div>
+
+<button type="button" class="otp-btn" onclick="verifyOTP()">Verify OTP</button>
+</div>
+
+<button class="register-btn" type="button" onclick="register()">Register Now</button>
+<p id="msg" class="footer-text"></p>
+</form>
+</div>
+</div>
+
+<script>
+let otpVerified = false;
+const API_BASE = location.protocol === "file:" || location.port !== "3000" ? "http://localhost:3000" : "";
+const DRAFT_FIELDS = ["fullname", "phone", "aadhaar", "address", "dob", "otp"];
+let sentRegisterAadhaar = sessionStorage.getItem("registerOtpAadhaar") || "";
+let sentRegisterPhone = sessionStorage.getItem("registerOtpPhone") || "";
+
+if (location.protocol === "file:" || location.port !== "3000") {
+    location.replace("http://localhost:3000/reg.html");
+}
+
+function apiUrl(path) {
+    return API_BASE + path;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("form");
+    if (form) {
+        form.addEventListener("submit", (event) => event.preventDefault());
+    }
+
+    DRAFT_FIELDS.forEach((id) => {
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        const savedValue = sessionStorage.getItem("register_" + id);
+        if (savedValue && input.value === "") {
+            input.value = savedValue;
+        }
+
+        input.addEventListener("input", () => {
+            if (id === "phone" || id === "aadhaar" || id === "otp") {
+                input.value = input.value.replace(/[^0-9]/g, "");
+            }
+            sessionStorage.setItem("register_" + id, input.value);
+        });
+    });
+});
+
+async function apiPost(path, body) {
+    let response;
+    try {
+        response = await fetch(apiUrl(path), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+    } catch (error) {
+        throw new Error("Backend is not connected. Run node server.js and open http://localhost:3000");
+    }
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.error || "Backend route not found. Make sure node backend/server.js is running.");
+    }
+    return data;
+}
+
+function setMessage(text, color = "#1f3b73") {
+    const msg = document.getElementById("msg");
+    msg.style.color = color;
+    msg.innerText = text;
+}
+
+function readPhoto(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Could not read the profile photo."));
+        reader.readAsDataURL(file);
+    });
+}
+
+async function sendOTP(){
+    const phone = document.getElementById("phone").value.trim();
+    const aadhaar = document.getElementById("aadhaar").value.trim();
+    const otpInput = document.getElementById("otp");
+
+    if(phone.length !== 10 || aadhaar.length !== 12){
+        alert("Enter valid Phone & Aadhaar");
+        return;
+    }
+
+    try {
+        const data = await apiPost("/api/register/send-otp", { phone, aadhaar });
+        otpVerified = false;
+        sentRegisterAadhaar = aadhaar;
+        sentRegisterPhone = phone;
+        sessionStorage.setItem("registerOtpAadhaar", aadhaar);
+        sessionStorage.setItem("registerOtpPhone", phone);
+        sessionStorage.setItem("register_aadhaar", aadhaar);
+        sessionStorage.setItem("register_phone", phone);
+        otpInput.value = data.demoOtp;
+        sessionStorage.setItem("register_otp", data.demoOtp);
+        setMessage("Demo OTP filled automatically. Click Verify OTP.", "green");
+        alert("Demo OTP: " + data.demoOtp);
+    } catch (error) {
+        setMessage(error.message, "red");
+        alert(error.message);
+    }
+}
+
+async function verifyOTP(){
+    const aadhaarInput = document.getElementById("aadhaar");
+    const otpInput = document.getElementById("otp");
+    const aadhaar = (aadhaarInput.value.trim() || sentRegisterAadhaar || sessionStorage.getItem("registerOtpAadhaar") || "").trim();
+    const otp = otpInput.value.trim();
+
+    if(aadhaar.length !== 12){
+        setMessage("Please enter Aadhaar and click Send OTP first.", "red");
+        return false;
+    }
+
+    if(otp.length !== 6){
+        setMessage("Enter the 6 digit OTP", "red");
+        return false;
+    }
+
+    try {
+        await apiPost("/api/register/verify-otp", { aadhaar, otp });
+        otpVerified = true;
+        aadhaarInput.value = aadhaar;
+        sessionStorage.setItem("register_aadhaar", aadhaar);
+        setMessage("OTP verified successfully", "green");
+        return true;
+    } catch (error) {
+        otpVerified = false;
+        setMessage(error.message, "red");
+        return false;
+    }
+}
+
+async function register(){
+    if(!otpVerified){
+        const verifiedNow = await verifyOTP();
+        if(!verifiedNow){
+            alert("Please verify OTP first");
+            return;
+        }
+    }
+
+    const fullname = document.getElementById("fullname").value.trim();
+    const phone = (document.getElementById("phone").value.trim() || sentRegisterPhone || sessionStorage.getItem("registerOtpPhone") || "").trim();
+    const aadhaar = (document.getElementById("aadhaar").value.trim() || sentRegisterAadhaar || sessionStorage.getItem("registerOtpAadhaar") || "").trim();
+    const address = document.getElementById("address").value.trim();
+    const dob = document.getElementById("dob").value;
+    const photoInput = document.getElementById("photo");
+
+    if(fullname === "" || phone === "" || aadhaar === "" || address === "" || dob === ""){
+        alert("Please fill all details");
+        return;
+    }
+
+    try {
+        const photo = photoInput.files[0] ? await readPhoto(photoInput.files[0]) : "";
+        const data = await apiPost("/api/register", { fullname, phone, aadhaar, address, dob, photo });
+        DRAFT_FIELDS.forEach((id) => sessionStorage.removeItem("register_" + id));
+        sessionStorage.removeItem("registerOtpAadhaar");
+        sessionStorage.removeItem("registerOtpPhone");
+        alert("Registration Successful! Your Voter ID is " + data.user.voterId + ". Please keep it for voting verification.");
+        window.location.href = "/Login.html";
+    } catch (error) {
+        setMessage(error.message, "red");
+        alert(error.message);
+    }
+}
+</script>
+</body>
+</html>

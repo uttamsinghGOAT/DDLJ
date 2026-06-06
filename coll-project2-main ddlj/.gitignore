@@ -1,0 +1,7 @@
+node_modules/
+.env
+npm-debug.log*
+backend/data/
+*.tmp
+OneNote Table Of Contents.onetoc2
+.DS_Store

@@ -15,6 +15,27 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
 }
+.live-results {
+    max-width: 820px;
+    margin: 0 auto 28px;
+    padding: 16px;
+    background: white;
+    border-left: 5px solid #1f7a3a;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.live-results h2 {
+    margin: 0 0 10px;
+}
+.live-results p {
+    margin: 4px 0 14px;
+}
+.result-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+}
 table {
     width: 100%;
     border-collapse: collapse;
@@ -38,6 +59,12 @@ tr:nth-child(even) {
 <body>
 
 <h1>Assam Legislative Assembly Election 2021 Winners</h1>
+
+<section class="live-results">
+    <h2>Live Demo Voting Results</h2>
+    <p id="totalVotes">Loading vote totals...</p>
+    <div id="resultsList"></div>
+</section>
 
 <table>
 <thead>
@@ -79,6 +106,42 @@ Because the full list of 126 winners with complete education details is compiled
 <p style="font-size:12px; color:#444; margin-top:15px;">
 *Education info is from MyNeta affidavit summaries of winners. 3
 </p>
+
+<script>
+const API_BASE = location.protocol === "file:" || location.port !== "3000" ? "http://localhost:3000" : "";
+if (location.protocol === "file:" || location.port !== "3000") {
+    location.replace("http://localhost:3000/result.html");
+}
+
+async function loadResults() {
+    const totalVotes = document.getElementById("totalVotes");
+    const resultsList = document.getElementById("resultsList");
+
+    try {
+        const response = await fetch(API_BASE + "/api/results");
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Could not load results.");
+        }
+
+        totalVotes.textContent = "Total votes cast: " + data.totalVotes;
+        resultsList.innerHTML = "";
+
+        data.results.forEach((candidate) => {
+            const row = document.createElement("div");
+            row.className = "result-row";
+            row.innerHTML = "<strong>" + candidate.party + " - " + candidate.name + "</strong><span>" + candidate.votes + " votes</span>";
+            resultsList.appendChild(row);
+        });
+    } catch (error) {
+        totalVotes.textContent = error.message;
+        totalVotes.style.color = "red";
+    }
+}
+
+loadResults();
+</script>
 
 </body>
 </html>

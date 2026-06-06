@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadhaar Login</title>
+    <link rel="stylesheet" href="login.css">
+    <style>
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #1a73e8;
+            cursor: pointer;
+        }
+        .register-link a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        #loginMessage {
+            text-align: center;
+            min-height: 20px;
+            margin: 10px 0 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Secure Aadhaar Login</h2>
+            <form id="loginForm">
+                <label for="aadhaar">Aadhaar Number</label>
+                <input type="text" id="aadhaar" placeholder="Enter 12-digit Aadhaar" maxlength="12" required>
+
+                <label for="otp">OTP</label>
+                <input type="text" id="otp" placeholder="Enter OTP" maxlength="6" required>
+
+                <div class="button-group">
+                    <button type="button" id="sendOtpBtn">Send OTP</button>
+                    <button type="submit" id="loginBtn">Login</button>
+                </div>
+                <p id="loginMessage"></p>
+            </form>
+
+            <div class="register-link">
+                Don't have an account? <a href="reg.html">Register here</a>
+            </div>
+        </div>
+    </div>
+
+<script>
+const aadhaarInput = document.getElementById("aadhaar");
+const otpInput = document.getElementById("otp");
+const sendOtpBtn = document.getElementById("sendOtpBtn");
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
+const API_BASE = location.protocol === "file:" || location.port !== "3000" ? "http://localhost:3000" : "";
+let sentLoginAadhaar = sessionStorage.getItem("loginOtpAadhaar") || "";
+
+if (location.protocol === "file:" || location.port !== "3000") {
+    location.replace("http://localhost:3000/Login.html");
+}
+
+function apiUrl(path) {
+    return API_BASE + path;
+}
+
+const savedLoginAadhaar = sessionStorage.getItem("login_aadhaar");
+if (savedLoginAadhaar && aadhaarInput.value === "") {
+    aadhaarInput.value = savedLoginAadhaar;
+}
+
+aadhaarInput.addEventListener("input", () => {
+    aadhaarInput.value = aadhaarInput.value.replace(/\D/g, "");
+    sessionStorage.setItem("login_aadhaar", aadhaarInput.value);
+});
+otpInput.addEventListener("input", () => {
+    otpInput.value = otpInput.value.replace(/\D/g, "");
+});
+
+function setMessage(text, color = "#1f3b73") {
+    loginMessage.style.color = color;
+    loginMessage.innerText = text;
+}
+
+async function apiPost(path, body) {
+    let response;
+    try {
+        response = await fetch(apiUrl(path), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+    } catch (error) {
+        throw new Error("Backend is not connected. Run node server.js and open http://localhost:3000");
+    }
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.error || "Backend route not found. Make sure node backend/server.js is running.");
+    }
+    return data;
+}
+
+sendOtpBtn.addEventListener("click", async () => {
+    if(aadhaarInput.value.length !== 12){
+        alert("Please enter a valid 12-digit Aadhaar number!");
+        return;
+    }
+
+    try {
+        const data = await apiPost("/api/login/send-otp", { aadhaar: aadhaarInput.value });
+        sentLoginAadhaar = aadhaarInput.value;
+        sessionStorage.setItem("loginOtpAadhaar", sentLoginAadhaar);
+        sessionStorage.setItem("login_aadhaar", sentLoginAadhaar);
+        otpInput.value = data.demoOtp;
+        setMessage("Demo OTP filled automatically. Click Login.", "green");
+        alert("OTP sent to your registered mobile number (demo): " + data.demoOtp);
+    } catch (error) {
+        setMessage(error.message, "red");
+        alert(error.message);
+    }
+});
+
+loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const aadhaar = (aadhaarInput.value.trim() || sentLoginAadhaar || sessionStorage.getItem("loginOtpAadhaar") || "").trim();
+
+    if(aadhaar.length !== 12){
+        alert("Enter a valid 12-digit Aadhaar number!");
+        return;
+    }
+
+    if(otpInput.value.length !== 6){
+        alert("Enter the 6 digit OTP!");
+        return;
+    }
+
+    try {
+        const data = await apiPost("/api/login", {
+            aadhaar,
+            otp: otpInput.value
+        });
+        aadhaarInput.value = aadhaar;
+        sessionStorage.removeItem("loginOtpAadhaar");
+        sessionStorage.removeItem("login_aadhaar");
+        localStorage.setItem("authToken", data.token);
+        alert("Login Successful!");
+        window.location.href = "/user.html";
+    } catch (error) {
+        setMessage(error.message, "red");
+        alert(error.message);
+    }
+});
+</script>
+</body>
+</html>
